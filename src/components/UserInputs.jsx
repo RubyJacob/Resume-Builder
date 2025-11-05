@@ -10,6 +10,7 @@ import { FaXmark } from "react-icons/fa6";
 import { duration } from '@mui/material';
 import { useRef } from 'react';
 import { addResumeAPI } from '../services/allAPI';
+import { useNavigate } from 'react-router-dom';
 
 const steps = ['Basic Informations', 'Contact Details', 'Educational Details', 'Work Experience', 'Skills and Certification', 'Review and Submit'];
 
@@ -18,6 +19,7 @@ function UserInputs({resumeDetails,setResumeDetails}) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
   const skillRef = useRef()
+  const navigate = useNavigate()
 
   console.log(resumeDetails);
   
@@ -87,7 +89,11 @@ function UserInputs({resumeDetails,setResumeDetails}) {
       try{
         const result =  await addResumeAPI(resumeDetails)
         console.log(result);
-        
+        if(result.status == 201){
+          alert('Resume added successfully')
+          const {id} = result.data
+          navigate(`/resume/${id}/view`)
+        }     
       }   
       catch(error){
        console.log(error);

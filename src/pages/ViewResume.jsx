@@ -1,16 +1,34 @@
-import React from 'react'
-import Header from '../components/Header'
-import Footer from '../components/Footer'
+import React, { useState } from 'react'
 import Preview from '../components/Preview'
+import { useParams } from 'react-router-dom'
+import { useEffect } from 'react'
+import { getResumeAPI } from '../services/allAPI'
 
 function ViewResume() {
+   const {id} = useParams()
+   console.log(id);
+   const [resume,setResume]  = useState({})
+
+   useEffect(()=>{
+      getResumeDetails()
+   },[])
+
+   const getResumeDetails = async() =>{
+      const result = await getResumeAPI(id)
+      console.log(result);
+      if(result.status == 200){
+          setResume(result.data)
+      }
+   }
+
+
   return (
     <>
       <div className="container my-5">
          <div className="row">
             <div className="col-md-2"></div>
             <div className="col-md-6">
-                <Preview/>
+                <Preview resumeDetails={resume} />
             </div>
             <div className="col-md-2"></div>
          </div>

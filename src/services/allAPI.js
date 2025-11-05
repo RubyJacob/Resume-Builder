@@ -5,3 +5,8 @@ import ServerURL from "./ServerURL"
 export const addResumeAPI = async(resume) =>{
     return await commonAPI(`${ServerURL}/resumes`,"POST",resume)
 }
+
+//get resume api - called from view resume
+export const getResumeAPI = async(id) =>{
+    return await commonAPI(`${ServerURL}/resumes/${id}`,"GET",{})
+}
