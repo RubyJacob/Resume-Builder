@@ -28,13 +28,7 @@ function Preview({ resumeDetails}) {
         ))
        }
        </div>
-      
-      
-      </div>
-
-
-
-    
+    </div>   
   )
 }
 
