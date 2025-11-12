@@ -8,7 +8,7 @@ import { FaHistory } from "react-icons/fa";
 import { FaBackward } from "react-icons/fa6";
 import Edit from '../components/Edit'
 import { jsPDF } from "jspdf";
-import html2canvas from 'html2canvas'
+import html2canvas from 'html2canvas';
 
 
 
@@ -35,22 +35,35 @@ function ViewResume() {
       const doc = new jsPDF();
       const preview = document.getElementById("preview")
       //screemshot of preview
-      const canvas = await html2canvas(preview,{scale:2})
+      const canvas = await html2canvas(preview,{scale:2,useCORS: true })
       console.log(canvas);
       //covert canvas to img
       const resumImg = canvas.toDataURL('image/png')
-      console.log(resumImg);
-      //add  screenshot to img
-      const pageWidth = doc.internal.pageSize.getWidth()
-     // const imgHeight = doc.internal.pageSize.getHeight()
-     
-     const imgWidth = pageWidth-5
-     const imgHeight = canvas.height*imgWidth/canvas.width
+      const pdf = new jsPDF("p", "pt", "a4");
+  const pdfWidth = pdf.internal.pageSize.getWidth();  // ~595.28pt
+  const pdfHeight = pdf.internal.pageSize.getHeight();
 
-      doc.addImage(resumImg,'PNG',0,0,imgWidth,imgHeight)
-      //download pdf
-      doc.save(`${resume.username}-resume.pdf`)
-      //local tim and add
+  // Canvas size (in px)
+  const imgWidth = canvas.width;
+  const imgHeight = canvas.height;
+
+  // Convert px → pt (1pt ≈ 1.333px at 96dpi)
+  const pxToPt = 0.75;
+  const imageWidthPt = imgWidth * pxToPt;
+  const imageHeightPt = imgHeight * pxToPt;
+
+  // Compute scale ratio so image fits inside PDF page
+  const scale = Math.min(pdfWidth / imageWidthPt, pdfHeight / imageHeightPt);
+
+  const renderWidth = imageWidthPt * scale;
+  const renderHeight = imageHeightPt * scale;
+
+  // Center horizontally (optional)
+  const marginX = (pdfWidth - renderWidth) / 2;
+
+  pdf.addImage(resumImg, "PNG", marginX, 0, renderWidth, renderHeight);
+  pdf.save(`${resume.username}-resume.pdf`);
+  
 
       const localTime = new Date()
       //console.log(localTime);
@@ -69,11 +82,11 @@ function ViewResume() {
 
 
   return (
-    <>
+    <div>
       <div className="container my-5">
          <div className="row">
             <div className="col-md-2"></div>
-            <div className="col-md-8 col-12 ">
+            <div className="col-md-6 col-12 ">
               <div className="d-flex align-items-center justify-content-center mt-3">
                   <button onClick={handleDownloadResume} className='btn text-primary fs-3'><FaFileDownload/></button>
                    <Edit resumeDetails={resume} setResumeDetails={setResume}/>
@@ -85,7 +98,7 @@ function ViewResume() {
             <div className="col-md-2"></div>
          </div>
       </div>
-     </>
+     </div>
   )
 }
 
